@@ -1,33 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <!--Data item that holds the reminder details-->
         <variable
-            name="reminderDataItem"
-            type="com.udacity.project4.locationreminders.reminderslist.ReminderDataItem" />
+                name="reminderDataItem"
+                type="com.udacity.project4.locationreminders.reminderslist.ReminderDataItem"/>
     </data>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        tools:context=".locationreminders.ReminderDescriptionActivity">
-        <!--TODO: add the design of the reminder details-->
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".locationreminders.ReminderDescriptionActivity">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Reminder Details"
-            android:textSize="@dimen/text_size_large"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+                android:text="@{reminderDataItem.title}"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginLeft="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginRight="@dimen/margin_16dp"
+                android:contentDescription="@string/title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/text_size_large"
+                android:layout_height="wrap_content"
+                android:id="@+id/title"/>
+        <TextView
+                android:text="@{reminderDataItem.description}"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginLeft="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginRight="@dimen/margin_16dp"
+                android:textSize="@dimen/text_size_large"
+                android:contentDescription="@string/description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/description" android:height="100dp"/>
+        <TextView
+                android:text="@{reminderDataItem.location}"
+                android:layout_marginStart="@dimen/margin_16dp"
+                android:layout_marginLeft="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:layout_marginEnd="@dimen/margin_16dp"
+                android:layout_marginRight="@dimen/margin_16dp"
+                android:contentDescription="@string/location"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_location"
+                app:drawableStartCompat="@drawable/ic_location"
+                android:id="@+id/selectLocation"/>
     </LinearLayout>
 </layout>
