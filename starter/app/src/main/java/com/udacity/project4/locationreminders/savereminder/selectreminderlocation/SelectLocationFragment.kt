@@ -3,31 +3,29 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.util.Log.d
 import android.util.Log.e
 import android.view.*
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PointOfInterest
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
@@ -86,8 +84,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         _viewModel.latitude.value = currentLocation.latitude
         _viewModel.longitude.value = currentLocation.longitude
-        _viewModel.selectedPOI.value = pointOfInterest
-        _viewModel.reminderSelectedLocationStr.value = pointOfInterest.name
+        pointOfInterest?.let {
+            _viewModel.selectedPOI.value = it
+            _viewModel.reminderSelectedLocationStr.value = it.name
+        }
         _viewModel.navigationCommand.value =
             NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment())
     }
@@ -102,18 +102,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             )
             poiMarker.showInfoWindow()
             pointOfInterest = it
-            addCircle(it.latLng, _viewModel.GEOFENCE_RADIUS)
+            onLocationSelected(it.latLng)
         }
-    }
-
-    private fun addCircle(latLng: LatLng, radius: Float) {
-        val circleOptions = CircleOptions()
-        circleOptions.center(latLng)
-        circleOptions.radius(radius.toDouble())
-        circleOptions.strokeColor(Color.argb(255, 255, 0, 0))
-        circleOptions.fillColor(Color.argb(64, 255, 0, 0))
-        circleOptions.strokeWidth(4f)
-        map.addCircle(circleOptions)
     }
 
     private fun setMapStyle(map: GoogleMap) {
@@ -134,13 +124,23 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private fun setMapLongClick(map: GoogleMap) {
         map.setOnMapLongClickListener {
-            map.addMarker(MarkerOptions().position(it))
             val snippet = String.format(
                 Locale.getDefault(),
                 "Lat: %1$.5f, Long: %2$.5f",
                 it.latitude,
                 it.longitude
             )
+
+            val poiMarker = map.addMarker(
+                MarkerOptions()
+                    .position(it)
+                    .title(getString(R.string.dropped_pin))
+                    .snippet(snippet)
+
+            )
+            poiMarker.showInfoWindow()
+            if (!this::pointOfInterest.isInitialized)
+                pointOfInterest = PointOfInterest(it, R.string.dropped_pin.toString(), snippet)
             onLocationSelected(it)
         }
     }
