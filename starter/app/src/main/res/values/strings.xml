@@ -45,4 +45,5 @@
     <string name="location">location</string>
     <string name="reminder_title">Reminder Title</string>
     <string name="long_click_confirmation">Long click to confirm location</string>
+    <string name="save_label">Select Location</string>
 </resources>

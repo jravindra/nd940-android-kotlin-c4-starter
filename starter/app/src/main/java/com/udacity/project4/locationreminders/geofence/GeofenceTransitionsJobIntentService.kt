@@ -8,6 +8,7 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
+import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.sendNotification
@@ -35,7 +36,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     }
 
     override fun onHandleWork(intent: Intent) {
-        //TODO: handle the geofencing transition events and
+        //handle the geofencing transition events and
         val event = GeofencingEvent.fromIntent(intent)
         if (event.hasError()) {
             e("GeoFencing", "Error: ${event.errorCode}")
@@ -50,7 +51,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
         //call @sendNotification
     }
 
-    //TODO: get the request id of the current geofence
+    // get the request id of the current geofence
     private fun sendNotification(triggeringGeofences: List<Geofence>) {
         val requestId = when {
             triggeringGeofences.isNotEmpty() -> {
@@ -64,7 +65,9 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
         if (requestId.isNullOrEmpty()) return
 
         //Get the local repository instance
-        val remindersLocalRepository: RemindersLocalRepository by inject()
+
+//        val remindersLocalRepository: RemindersLocalRepository by inject()
+        val remindersLocalRepository = RemindersLocalRepository(LocalDB.createRemindersDao(applicationContext))
 //        Interaction to the repository has to be through a coroutine scope
         CoroutineScope(coroutineContext).launch(SupervisorJob()) {
             //get the reminder with the request id

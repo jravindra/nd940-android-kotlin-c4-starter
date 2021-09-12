@@ -20,8 +20,6 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     val selectedPOI = MutableLiveData<PointOfInterest>()
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
-    val GEOFENCE_RADIUS = 30f
-
 
     /**
      * Clear the live data objects to start fresh next time the view model gets called
@@ -69,7 +67,7 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     /**
      * Validate the entered data and show error to the user if there's any invalid data
      */
-    private fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
+    fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
         if (reminderData.title.isNullOrEmpty()) {
             showSnackBarInt.value = R.string.err_enter_title
             return false
