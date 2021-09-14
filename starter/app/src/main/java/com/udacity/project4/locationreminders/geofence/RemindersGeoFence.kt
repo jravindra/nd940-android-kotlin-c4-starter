@@ -1,6 +1,5 @@
 package com.udacity.project4.locationreminders.geofence
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
@@ -11,7 +10,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.Fragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.LocationRequest
@@ -20,7 +19,6 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
-import com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectLocationFragment
 
 
 private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
@@ -29,7 +27,7 @@ private const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
 private const val LOCATION_PERMISSION_INDEX = 0
 private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
 
-class RemindersGeoFence(private var context: Context, private var view: View, private var activity: FragmentActivity) {
+class RemindersGeoFence(private var context: Context, private var view: View, private var fragment: Fragment) {
 
 
     private val geofenceHelper = GeofenceHelper(context)
@@ -101,9 +99,14 @@ class RemindersGeoFence(private var context: Context, private var view: View, pr
 
             if (exception is ResolvableApiException && resolve) {
                 try {
-                    exception.startResolutionForResult(
-                        activity,
-                        REQUEST_TURN_DEVICE_LOCATION_ON
+                    fragment.startIntentSenderForResult(
+                        exception.resolution.intentSender,
+                        REQUEST_TURN_DEVICE_LOCATION_ON,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null
                     )
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d("ReminderGeoFence", "Error getting location settings resolution: " + sendEx.message)

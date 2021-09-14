@@ -222,7 +222,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 val mySnackbar = Snackbar.make(
                     view!!,
                     "Please grant location permissions to proceed!",
-                    Snackbar.LENGTH_INDEFINITE
+                    Snackbar.LENGTH_LONG
                 )
                 mySnackbar.show()
                 mySnackbar.setAction("Settings", LocationSettingsListener(this))

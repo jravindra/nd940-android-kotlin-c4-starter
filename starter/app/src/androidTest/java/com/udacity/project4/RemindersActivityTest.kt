@@ -1,9 +1,15 @@
 package com.udacity.project4
 
 import android.app.Application
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
@@ -11,6 +17,7 @@ import com.udacity.project4.locationreminders.reminderslist.RemindersListViewMod
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -65,6 +72,48 @@ class RemindersActivityTest :
         }
     }
 
+    @Test
+    fun testMissingTitle() {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        val saveReminderViewModel: SaveReminderViewModel = get()
+
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderDescription)).perform(
+            typeText("Visit SF"),
+            closeSoftKeyboard()
+        )
+        saveReminderViewModel.reminderSelectedLocationStr.postValue("Pier 39")
+        saveReminderViewModel.latitude.postValue(20.0)
+        saveReminderViewModel.longitude.postValue(20.0)
+
+        onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText("Please enter title")))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun testMissingLocation() {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle)).perform(typeText("Buy milk"), closeSoftKeyboard())
+        onView(withId(R.id.reminderDescription)).perform(
+            typeText("Whole foods"),
+            closeSoftKeyboard()
+        )
+
+        onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText("Please select location")))
+
+        activityScenario.close()
+    }
 
 
 }

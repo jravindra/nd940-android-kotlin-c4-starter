@@ -13,7 +13,6 @@ import com.udacity.project4.locationreminders.data.local.RemindersLocalRepositor
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.sendNotification
 import kotlinx.coroutines.*
-import org.koin.android.ext.android.inject
 import kotlin.coroutines.CoroutineContext
 
 class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
@@ -46,22 +45,16 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
         if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
             || event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
         ) {
-            sendNotification(event.triggeringGeofences)
+            val triggeringGeofences = event.triggeringGeofences
+            triggeringGeofences.forEach {
+                sendNotification(it.requestId)
+            }
         }
         //call @sendNotification
     }
 
     // get the request id of the current geofence
-    private fun sendNotification(triggeringGeofences: List<Geofence>) {
-        val requestId = when {
-            triggeringGeofences.isNotEmpty() -> {
-                triggeringGeofences[0].requestId
-            }
-            else -> {
-                return
-            }
-        }
-
+    private fun sendNotification(requestId: String) {
         if (requestId.isNullOrEmpty()) return
 
         //Get the local repository instance
